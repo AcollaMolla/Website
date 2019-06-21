@@ -1,0 +1,466 @@
+import React from 'react';
+import logo from './logo.svg';
+import './App.css';
+import axios from 'axios';
+import Sound from 'react-sound';
+import image0 from './004.JPG';
+import image1 from './005.jpg';
+import image2 from './006.jpg';
+import image3 from './007.jpg';
+//import video from './IMG_5146.mp4'
+import sound from './001.mp3';
+//import { BehaviorSubject } from 'rxjs';
+
+class Fish extends React.Component{
+  constructor(props){
+    super(props);
+    this.state ={
+      fish: [],
+      species: null,
+      catchDate: null,
+      length: null,
+      weight: null
+    }
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  handleChange(event){
+    if(event.target.className === "namefield"){
+      this.setState({
+        species: event.target.value
+      });
+    }
+    if(event.target.className === "catch-date"){
+      this.setState({
+        catchDate: event.target.value
+      });
+    }
+    if(event.target.className === "length"){
+      this.setState({
+        length: event.target.value
+      });
+    }
+    if(event.target.className === "weight"){
+      this.setState({
+        weight: event.target.value
+      });
+    }
+  }
+  handleSubmit(event){
+    axios.post('https://resttest-a0e3a.firebaseio.com/fishing.json',{
+      species: this.state.species,
+      catchDate: this.state.catchDate,
+      length: this.state.length,
+      weight: this.state.weight
+    });
+    this.setState(prevState =>({
+      popup: !this.state.popup,
+      fish: [...prevState.fish, {species: this.state.species, catchDate: this.state.catchDate, length: this.state.length, weight: this.state.weight}]
+    }));
+    event.preventDefault();
+  }
+  renderPopup(){
+    return(
+      <div className = "popup">
+        <div className = "popup-inner">
+          <h1>Add new fish</h1>
+            <form className = "addStockForm" onSubmit = {this.handleSubmit}>
+            <p>Species: 
+              <input className = "namefield" type="text" required = {true} onChange = {this.handleChange}></input>
+            </p>
+            <p>Catch date:
+              <input className = "catch-date" type="date" required = {true} onChange = {this.handleChange}></input>
+            </p>
+            <p>Length:
+              <input className = "length" type="text" required = {true} onChange = {this.handleChange}></input>
+            </p>
+            <p>Weight:
+              <input className = "weight" type="text" onChange = {this.handleChange}></input>
+            </p>
+            <input type="submit" value="Submit" />
+            <button onClick = { () => this.togglePopup()}>Cancel</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+  togglePopup(){
+    this.setState({
+      popup: !this.state.popup
+    });
+  }
+  componentDidMount(){
+    axios.get('https://resttest-a0e3a.firebaseio.com/fishing.json') //Funkar med restcountries/all
+      .then(res =>{
+        const fish = Object.values(res.data);
+        this.setState({fish});
+      })
+  }
+
+  render(){
+    console.log("render");
+    return(
+      <div className = "App-content">
+      {this.state.popup ? this.renderPopup() : null}
+      <h1>Fishes</h1>
+      <table>
+        <tbody>
+          <tr><th>Species</th><th>Catch date</th><th>Length (cm)</th><th>Weight (kg)</th></tr>
+          {this.state.fish.map(fish => <tr key={fish.catchDate}><td>{fish.species}</td><td>{fish.catchDate}</td><td>{fish.length}</td><td>{fish.weight}</td></tr>)}
+        </tbody>
+      </table>
+      <button onClick = { () => this.togglePopup()}>Add fish</button>
+      </div>
+    );
+  }
+}
+
+class Stocks extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = ({
+      stocks: [],
+      popup: false,
+      name: null,
+      bDate: null,
+      sDate: null,
+    });
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  handleChange(event){
+    if(event.target.className === "namefield"){
+      this.setState({
+        name: event.target.value
+      });
+    }
+    if(event.target.className === "buy-date"){
+      this.setState({
+        bDate: event.target.value
+      });
+    }
+    if(event.target.className === "sell-date"){
+      this.setState({
+        sDate: event.target.value
+      });
+    }
+  }
+  handleSubmit(event){
+    axios.post('https://resttest-a0e3a.firebaseio.com/stocks.json',{
+      name: this.state.name,
+      buyDate: this.state.bDate,
+      sellDate: this.state.sDate
+    });
+    this.setState(prevState =>({
+      popup: !this.state.popup,
+      stocks: [...prevState.stocks, {name: this.state.name, buyDate: this.state.bDate, sellDate: this.state.sDate}]
+    }));
+    event.preventDefault();
+  }
+  renderPopup(){
+    return(
+      <div className = "popup">
+        <div className = "popup-inner">
+          <h1>Add new stock</h1>
+            <form className = "addStockForm" onSubmit = {this.handleSubmit}>
+            <p>Name: 
+              <input className = "namefield" type="text" required = {true} onChange = {this.handleChange}></input>
+            </p>
+            <p>Buy date:
+              <input className = "buy-date" type="date" required = {true} onChange = {this.handleChange}></input>
+            </p>
+            <p>Sell date:
+              <input className = "sell-date" type="date" required = {true} onChange = {this.handleChange}></input>
+            </p>
+            <input type="submit" value="Submit" />
+            <button onClick = { () => this.togglePopup()}>Cancel</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+  togglePopup(){
+    this.setState({
+      popup: !this.state.popup
+    });
+  }
+  componentDidMount(){
+    axios.get('https://resttest-a0e3a.firebaseio.com/stocks.json') //Funkar med restcountries/all
+      .then(res =>{
+        const stocks = Object.values(res.data);
+        this.setState({stocks});
+      })
+  }
+  render(){
+    console.log("render");
+    console.log(this.state.persons);
+    return(
+      <div className = "App-content">
+      {this.state.popup ? this.renderPopup() : null}
+      <h1>Stocks</h1>
+      <table>
+        <tbody>
+          <tr><th>Name</th><th>Buy date</th><th>Sell date</th></tr>
+          {this.state.stocks.map(stock => <tr key={stock.buyDate}><td>{stock.name}</td><td>{stock.buyDate}</td><td>{stock.sellDate}</td></tr>)}
+        </tbody>
+      </table>
+      <button onClick = { () => this.togglePopup()}>Add stock</button>
+      </div>
+    );
+  }
+}
+class Clock extends React.Component{
+  constructor(props){
+    super(props); 
+    this.state = {
+      time: new Date().toLocaleString()
+    };
+  }
+
+  componentDidMount(){
+    this.intervalID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.intervalID);
+  }
+  
+  tick(){
+    this.setState({
+      time: new Date().toLocaleString()
+    });
+  }
+
+  render(){
+    return(
+      <div className = "App-clock">
+        <p>The time is {this.state.time}</p>
+      </div>
+    );
+  }
+}
+class Gallery extends React.Component{
+  constructor(props){
+    super(props);
+    this.state ={
+    };
+  }
+  render(){
+    return(
+      <div className = "App-content">
+        <div className = "App-gallery">
+          <div className = "App-gallery-images">
+            <p>Images</p>
+          </div>
+          <div className = "App-gallery-videos">
+            <p>Videos</p>
+          </div>
+          <div className = "App-gallery-music">
+            <p>Music</p>
+          </div>
+        </div>
+      </div>
+
+    );
+  }
+}
+class Test extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      pageView: 0,
+      color: "#282c34",
+      popup: false,
+      image: {
+        isImage: false,
+        url: null
+      },
+      settings: {
+        background: null
+      }
+    };
+  }
+  componentDidMount(){
+    axios.get('https://resttest-a0e3a.firebaseio.com/settings.json')
+      .then(res =>{
+        const settings = Object.values(res.data)
+        //Check if color or image is null and set state accordingly
+        console.log(settings[0].isImage);
+        if(settings[0].isImage !== true)
+          this.setState({color: settings[0].backgroundColor});
+        else if(typeof(settings[0].isImage) != 'undefined'){
+          console.log("here");
+          this.setState({image : settings[0]});
+          console.log(this.state.image.url);
+        }
+      })
+  }
+  renderMenu(){
+    return(
+      <div className="App-menu">
+        <button className="App-menu-button"
+          onClick={() => this.menuClick(0)}
+          >Start
+        </button>
+        <button className="App-menu-button"
+          onClick={() => this.menuClick(1)}
+          >Stocks
+        </button>
+        <button className="App-menu-button"
+          onClick={() => this.menuClick(2)}
+          >Fishing
+        </button>
+        <button className="App-menu-button"
+          onClick={() => this.menuClick(3)}
+          >Gallery
+        </button>
+        <button className="App-menu-button"
+          //onClick={() => this.menuClick(4)}
+          >Ulvsby Pirate Chat
+        </button>
+        <button className="App-menu-button"
+          //onClick={() => this.menuClick(5)}
+          >Pirate Quiz
+        </button>
+        <button className="App-menu-button"
+          onClick={() => this.menuClick(10)}
+          >Settings
+        </button>
+      </div>
+    );
+  }
+  renderSettings(){
+    return(
+      <div className = "App-settings">
+      <h1>Settings</h1>
+      <div className = "background">
+        <h3>Background layout</h3>
+        <p>Color:
+          <button title = "Deep dark blue like the nightsky hovering above Sågis" onClick = { () => this.changeColor("#282c34")}>Sågis Nightsky Blue</button>
+          <button title = "Green like the trees and forests covering the ruins of Sågis" onClick = { () => this.changeColor("#42f445")}>Sågis Jungle Green</button>
+          <button title = "Red as the holy fortress once standing tall beside Sågis Bay" onClick = { () => this.changeColor("#a91107")}>Sågis Red</button>
+          <button title = "As blue as the pure water in Sågis Bay" onClick = { () => this.changeColor("#26b4c1")}>Sågis Bay Blue</button>
+        </p>
+        <p>Image:
+          <button onClick = { () => this.changeImage(image0)}>Aerial</button>
+          <button onClick = { () => this.changeImage(image1)}>Winter Sågis</button>
+          <button onClick = { () => this.changeImage(image2)}>Inside the Fort</button>
+          <button onClick = { () => this.changeImage(image3)}>Staircase to Heaven</button>
+        </p>
+      </div>
+      <div className = "background">
+        <h3>Text and fonts</h3>
+      </div>
+      </div>
+    );
+  }
+  changeColor(color){
+    this.setState({
+      color: color,
+      image: {
+        isImage: false,
+        url: null
+      }
+    });
+    axios.patch('https://resttest-a0e3a.firebaseio.com/settings/-LhjrlCUGYUoTdn0Fu47/.json', {
+      backgroundColor: color,
+      isImage: false
+    });
+  }
+  changeImage(image){
+    console.log("Image path: " + image);
+    this.setState({
+      color: "#282c34",
+      image: {
+        isImage: true,
+        url: image
+      }
+    })
+    axios.patch('https://resttest-a0e3a.firebaseio.com/settings/-LhjrlCUGYUoTdn0Fu47/.json', {
+      url: image,
+      isImage: true
+    });
+  }
+  render(){
+    if(this.state.pageView === 0){
+      return(
+        <div className="App">
+        <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
+        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+        {this.renderMenu()}
+        <Clock></Clock>
+          <div>
+          <img src={logo} className="App-logo" alt="logo" />
+          <p>
+            Edit <code>src/App.js</code> and save to reload.
+          </p>
+          </div>
+        </header>
+      </div>
+      );
+    }
+    if(this.state.pageView === 1){
+      return(
+        <div className="App">
+        <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
+        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+        {this.renderMenu()}
+        <Clock></Clock>
+        <Stocks></Stocks>
+        </header>
+        </div>
+      );
+    }
+    if(this.state.pageView === 2){
+      return(
+        <div className="App">
+          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
+          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+            {this.renderMenu()}
+            <Clock></Clock>
+            <Fish></Fish>
+          </header>
+        </div>
+      );
+    }
+    if(this.state.pageView === 3){
+      return(
+        <div className="App">
+          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
+          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+            {this.renderMenu()}
+            <Clock></Clock>
+            <Gallery></Gallery>
+          </header>
+        </div>
+      );
+    }
+    if(this.state.pageView === 10){
+      return(
+        <div className="App">
+          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
+        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+        {this.renderMenu()}
+        <Clock></Clock>
+        {this.renderSettings()}
+        </header>
+        </div>
+      );
+    }
+  }
+  menuClick(src){
+    this.setState({
+      pageView : src
+    })
+  }
+}
+function App() {
+  return (
+    <Test></Test>
+  );
+}
+
+export default App;
