@@ -353,6 +353,26 @@ class Test extends React.Component{
       </div>
       <div className = "background">
         <h3>Text and fonts</h3>
+        <p>Color:
+          <button title = "White as the snow covering the ruins of Sågis">Sågis Snow White</button>
+        </p>
+        <p>Font:
+          <button title = "Easy to read so why change?">Standard</button>
+          <button title = "After a bottle of rum">Pirate</button>
+        </p>
+        <p>Font size:
+          <button title = "A font size for normal people">Normal</button>
+          <button title = "When you're almost blind">Scyllas mormor</button>
+        </p>
+      </div>
+      <div className = "background">
+        <h3>Background music</h3>
+        <p>Track:
+          <button>Heroes of Might & Magic III</button>
+        </p>
+      </div>
+      <div className = "background">
+        <h3>Test</h3>
       </div>
       </div>
     );
@@ -442,7 +462,7 @@ class Test extends React.Component{
       return(
         <div className="App">
           <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
-        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover', backgroundRepeat: 'repeat-y'} : {backgroundColor: this.state.color}}>
         {this.renderMenu()}
         <Clock></Clock>
         {this.renderSettings()}

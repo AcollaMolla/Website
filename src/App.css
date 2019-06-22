@@ -8,8 +8,13 @@
   top:0;
   background-color: #61dafb;
 }
-.App-clock{
+.App-settings{
   position: absolute;
+  top:10%;
+  bottom:0;
+}
+.App-clock{
+  position: fixed;
   bottom:1vh;
 }
 .popup{
@@ -40,13 +45,14 @@
 }
 
 .App-header {
-  min-height: 100vh;
+  min-height: 135vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  flex-flow:column;
 }
 .App-content{
   position:absolute;
