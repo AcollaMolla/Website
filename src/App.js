@@ -10,6 +10,7 @@ import image3 from './007.jpg';
 //import video from './IMG_5146.mp4'
 import sound from './001.mp3';
 //import { BehaviorSubject } from 'rxjs';
+const DEFAULT_BACKGROUND = "#282c34";
 
 class Fish extends React.Component{
   constructor(props){
@@ -47,7 +48,7 @@ class Fish extends React.Component{
     }
   }
   handleSubmit(event){
-    axios.post('https://resttest-a0e3a.firebaseio.com/fishing.json',{
+    axios.post('//localhost:8081/fishing',{
       species: this.state.species,
       catchDate: this.state.catchDate,
       length: this.state.length,
@@ -90,7 +91,7 @@ class Fish extends React.Component{
     });
   }
   componentDidMount(){
-    axios.get('https://resttest-a0e3a.firebaseio.com/fishing.json') //Funkar med restcountries/all
+    axios.get('//localhost:8081/fishing')
       .then(res =>{
         const fish = Object.values(res.data);
         this.setState({fish});
@@ -146,7 +147,8 @@ class Stocks extends React.Component{
     }
   }
   handleSubmit(event){
-    axios.post('https://resttest-a0e3a.firebaseio.com/stocks.json',{
+    console.log("Skickar aktie");
+    axios.post('//localhost:8081/stocks',{
       name: this.state.name,
       buyDate: this.state.bDate,
       sellDate: this.state.sDate
@@ -185,7 +187,7 @@ class Stocks extends React.Component{
     });
   }
   componentDidMount(){
-    axios.get('https://resttest-a0e3a.firebaseio.com/stocks.json') //Funkar med restcountries/all
+    axios.get('//localhost:8081/stocks') //Funkar med restcountries/all
       .then(res =>{
         const stocks = Object.values(res.data);
         this.setState({stocks});
@@ -272,7 +274,7 @@ class Test extends React.Component{
     super(props);
     this.state = {
       pageView: 0,
-      color: "#282c34",
+      color: DEFAULT_BACKGROUND,
       popup: false,
       image: {
         isImage: false,
@@ -284,17 +286,16 @@ class Test extends React.Component{
     };
   }
   componentDidMount(){
-    axios.get('https://resttest-a0e3a.firebaseio.com/settings.json')
+    axios.get('//localhost:8081/settings')
       .then(res =>{
         const settings = Object.values(res.data)
         //Check if color or image is null and set state accordingly
-        console.log(settings[0].isImage);
+        console.log(settings);
         if(settings[0].isImage !== true)
           this.setState({color: settings[0].backgroundColor});
         else if(typeof(settings[0].isImage) != 'undefined'){
           console.log("here");
           this.setState({image : settings[0]});
-          console.log(this.state.image.url);
         }
       })
   }
@@ -385,23 +386,25 @@ class Test extends React.Component{
         url: null
       }
     });
-    axios.patch('https://resttest-a0e3a.firebaseio.com/settings/-LhjrlCUGYUoTdn0Fu47/.json', {
+    axios.post('//localhost:8081/settings', {
       backgroundColor: color,
-      isImage: false
+      isImage: false,
+      url: null
     });
   }
   changeImage(image){
     console.log("Image path: " + image);
     this.setState({
-      color: "#282c34",
+      color: DEFAULT_BACKGROUND,
       image: {
         isImage: true,
         url: image
       }
     })
-    axios.patch('https://resttest-a0e3a.firebaseio.com/settings/-LhjrlCUGYUoTdn0Fu47/.json', {
+    axios.post('//localhost:8081/settings', {
       url: image,
-      isImage: true
+      isImage: true,
+      color: DEFAULT_BACKGROUND
     });
   }
   render(){
