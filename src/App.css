@@ -67,7 +67,7 @@
 .App-gallery-images{
   position: absolute;
   top:10%;
-  margin-left:30vh;
+  margin-left:0vh;
   background-color: rgba(0, 0, 0, 0.5);
   min-width:30vh;
   min-height:30vh;
@@ -78,7 +78,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   min-width:30vh;
   min-height:30vh;
-  margin-left:70vh;
+  margin-left:40vh;
 }
 .App-gallery-music{
   position: absolute;
@@ -86,7 +86,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   min-width:30vh;
   min-height:30vh;
-  margin-left:110vh;
+  margin-left:80vh;
 }
 .App-gallery-images:hover{
   background-color: rgba(0, 0, 0, 0.8);
@@ -99,6 +99,15 @@
 .App-gallery-music:hover{
   background-color: rgba(0, 0, 0, 0.8);
   cursor: grab;
+}
+.App-gallery-images:active{
+  cursor: grabbing;
+}
+.App-gallery-videos:active{
+  cursor: grabbing;
+}
+.App-gallery-music:active{
+  cursor: grabbing;
 }
 .App-content table{
   margin-left: auto;
