@@ -273,6 +273,7 @@ class Test extends React.Component{
   constructor(props){
     super(props);
     this.state = {
+      userId: 0, //A test variable to fetch settings based on user's unique id.
       pageView: 0,
       color: DEFAULT_BACKGROUND,
       popup: false,
@@ -286,7 +287,7 @@ class Test extends React.Component{
     };
   }
   componentDidMount(){
-    axios.get('//localhost:8081/settings')
+    axios.get('//localhost:8081/settings/' + this.state.userId)
       .then(res =>{
         const settings = Object.values(res.data)
         //Check if color or image is null and set state accordingly
@@ -386,7 +387,7 @@ class Test extends React.Component{
         url: null
       }
     });
-    axios.post('//localhost:8081/settings', {
+    axios.post('//localhost:8081/settings/' + this.state.userId, {
       backgroundColor: color,
       isImage: false,
       url: null
@@ -401,7 +402,7 @@ class Test extends React.Component{
         url: image
       }
     })
-    axios.post('//localhost:8081/settings', {
+    axios.post('//localhost:8081/settings/' + this.state.userId, {
       url: image,
       isImage: true,
       color: DEFAULT_BACKGROUND
