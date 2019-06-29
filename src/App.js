@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import Sound from 'react-sound';
+import ImageGallery from 'react-image-gallery';
 import image0 from './004.JPG';
 import image1 from './005.jpg';
 import image2 from './006.jpg';
@@ -248,15 +249,26 @@ class Gallery extends React.Component{
   constructor(props){
     super(props);
     this.state ={
+      images: [{original: 'http://lorempixel.com/1000/600/nature/1/'}, {original: 'http://lorempixel.com/1000/600/nature/2/'}, {original: 'http://lorempixel.com/1000/600/nature/3/'}],
       showImageGallery: false,
       showVideoGallery: false,
       showMusicGallery: false
     };
   }
+
+  /*componentDidMount(){
+    axios.get('//localhost:8081/images')
+    .then(res =>{
+      const images = Object.values(res.data);
+      this.setState({images});
+    })
+  }*/
+
   renderImageGallery(){
     return(
       <div className = "App-gallery-images-full">
       <h1>Images</h1>
+      <ImageGallery items = {this.state.images}></ImageGallery>
     </div>
     )
   }
