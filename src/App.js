@@ -248,22 +248,60 @@ class Gallery extends React.Component{
   constructor(props){
     super(props);
     this.state ={
+      showImageGallery: false,
+      showVideoGallery: false,
+      showMusicGallery: false
     };
+  }
+  renderImageGallery(){
+    return(
+      <div className = "App-gallery-images-full">
+      <h1>Images</h1>
+    </div>
+    )
+  }
+  toggleGallery(type){
+    switch(type){
+      case "image":
+        this.setState({
+          showImageGallery: true,
+          showVideoGallery: false,
+          showMusicGallery: false
+        });
+      break;
+      case "video":
+        this.setState({
+          showImageGallery: false,
+          showVideoGallery: true,
+          showMusicGallery: false
+        });
+      break;
+      case "music":
+        this.setState({
+          showImageGallery: false,
+          showVideoGallery: false,
+          showMusicGallery: true
+        });
+      break;
+      default: break;
+    }
   }
   render(){
     return(
       <div className = "App-content">
-        <div className = "App-gallery">
-          <div className = "App-gallery-images">
-            <p>Images</p>
+        {this.state.showImageGallery ? this.renderImageGallery():
+          <div className = "App-gallery">
+            <div onClick = { () => this.toggleGallery("image")} className = "App-gallery-images">
+              <p>Images</p>
+            </div>
+            <div className = "App-gallery-videos">
+              <p>Videos</p>
+            </div>
+            <div className = "App-gallery-music">
+              <p>Music</p>
+            </div>
           </div>
-          <div className = "App-gallery-videos">
-            <p>Videos</p>
-          </div>
-          <div className = "App-gallery-music">
-            <p>Music</p>
-          </div>
-        </div>
+        }
       </div>
 
     );
