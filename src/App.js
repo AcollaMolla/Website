@@ -4,6 +4,7 @@ import './App.css';
 import axios from 'axios';
 import Sound from 'react-sound';
 import ImageGallery from 'react-image-gallery';
+import FormData from 'form-data';
 import image0 from './004.JPG';
 import image1 from './005.jpg';
 import image2 from './006.jpg';
@@ -252,7 +253,9 @@ class Gallery extends React.Component{
       images: [{original: 'http://lorempixel.com/1000/600/nature/1/'}, {original: 'http://lorempixel.com/1000/600/nature/2/'}, {original: 'http://lorempixel.com/1000/600/nature/3/'}],
       showImageGallery: false,
       showVideoGallery: false,
-      showMusicGallery: false
+      showMusicGallery: false,
+      showPopup: false,
+      fileToUpload: null
     };
   }
 
@@ -263,12 +266,49 @@ class Gallery extends React.Component{
       this.setState({images});
     })
   }*/
+  togglePopup(type){
+    this.setState({showPopup: !this.state.showPopup})
+  }
+
+  handleFile(e){
+    console.log(e.target.files[0]);
+    this.setState({fileToUpload: e.target.files[0]});
+  }
+
+  handleUpload(){
+    let file = this.state.fileToUpload;
+    let formdata = new FormData();
+    formdata.append('image', file);
+    formdata.append('name', "sågis");
+    axios({
+      url: '',
+      method: 'POST',
+      data: formdata,
+    })
+  }
+
+  renderPopup(){
+    return(
+      <div className = "popup">
+        <div className = "popup-inner">
+          <h3>Add new image</h3>
+          <form>
+            <input type = "file" onChange = { (e) => this.handleFile(e)}></input>
+          </form>
+          <button onClick = { () => this.togglePopup()}>Cancel</button>
+          <button onClick = { () => this.handleUpload()}>Upload</button>
+        </div>
+      </div>
+    )
+  }
 
   renderImageGallery(){
     return(
       <div className = "App-gallery-images-full">
       <h1>Images</h1>
+      <button onClick = { () => this.togglePopup("image")}>New image</button>
       <ImageGallery items = {this.state.images}></ImageGallery>
+      {this.state.showPopup ? this.renderPopup() : null}
     </div>
     )
   }
