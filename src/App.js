@@ -250,7 +250,7 @@ class Gallery extends React.Component{
   constructor(props){
     super(props);
     this.state ={
-      images: [{original: 'http://lorempixel.com/1000/600/nature/1/'}, {original: 'http://lorempixel.com/1000/600/nature/2/'}, {original: 'http://lorempixel.com/1000/600/nature/3/'}],
+      images: [],
       showImageGallery: false,
       showVideoGallery: false,
       showMusicGallery: false,
@@ -260,13 +260,14 @@ class Gallery extends React.Component{
     };
   }
 
-  /*componentDidMount(){
+  componentDidMount(){
     axios.get('//localhost:8081/images')
     .then(res =>{
       const images = Object.values(res.data);
       this.setState({images});
     })
-  }*/
+  }
+  
   togglePopup(type){
     this.setState({
       showPopup: !this.state.showPopup,
@@ -289,7 +290,14 @@ class Gallery extends React.Component{
     axios.post("//localhost:8081/images", formdata, { 
     })
     .then(res => {
-      console.log(res.statusText);
+      console.log(res.data.filename);
+      let image = {
+        original: "http://localhost:8081/images/" + res.data.filename
+      }
+      console.log(image);
+      this.setState(prevState =>({
+        images: [...prevState.images, image]
+      }));
       this.togglePopup();
     })
   }
