@@ -255,7 +255,8 @@ class Gallery extends React.Component{
       showVideoGallery: false,
       showMusicGallery: false,
       showPopup: false,
-      fileToUpload: null
+      fileToUpload: null,
+      uploadButtonEnabled: false
     };
   }
 
@@ -267,23 +268,29 @@ class Gallery extends React.Component{
     })
   }*/
   togglePopup(type){
-    this.setState({showPopup: !this.state.showPopup})
+    this.setState({
+      showPopup: !this.state.showPopup,
+      uploadButtonEnabled: false
+    })
   }
 
   handleFile(e){
     console.log(e.target.files[0]);
-    this.setState({fileToUpload: e.target.files[0]});
+    this.setState({
+      fileToUpload: e.target.files[0], 
+      uploadButtonEnabled: true
+    });
   }
 
   handleUpload(){
     let file = this.state.fileToUpload;
-    let formdata = new FormData();
-    formdata.append('image', file);
-    formdata.append('name', "sågis");
-    axios({
-      url: '',
-      method: 'POST',
-      data: formdata,
+    const formdata = new FormData();
+    formdata.append('file', file);
+    axios.post("//localhost:8081/images", formdata, { 
+    })
+    .then(res => {
+      console.log(res.statusText);
+      this.togglePopup();
     })
   }
 
@@ -296,7 +303,7 @@ class Gallery extends React.Component{
             <input type = "file" onChange = { (e) => this.handleFile(e)}></input>
           </form>
           <button onClick = { () => this.togglePopup()}>Cancel</button>
-          <button onClick = { () => this.handleUpload()}>Upload</button>
+          {this.state.uploadButtonEnabled ? <button onClick = { () => this.handleUpload()}>Upload</button> : <button onClick = { () => this.handleUpload()} disabled>Upload</button>}
         </div>
       </div>
     )
