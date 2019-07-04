@@ -298,7 +298,7 @@ class Gallery extends React.Component{
     return(
       <div className = "popup">
         <div className = "popup-inner">
-          <h3>Add new image</h3>
+          <h3>Add new file</h3>
           <form>
             <input type = "file" onChange = { (e) => this.handleFile(e)}></input>
           </form>
