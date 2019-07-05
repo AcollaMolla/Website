@@ -251,6 +251,7 @@ class Gallery extends React.Component{
     super(props);
     this.state ={
       images: [],
+      filteredFiles: [],
       showImageGallery: false,
       showVideoGallery: false,
       showMusicGallery: false,
@@ -315,11 +316,37 @@ class Gallery extends React.Component{
     )
   }
 
+  handleSelect(e){
+    let filteredFile = [];
+    this.state.images.forEach(function(element){
+      //console.log(element.original.substring(element.original.indexOf('.')));
+      const file = element.original;
+      switch(e.target.value){
+        case("All"):
+          break;
+        case("JPEG/PNG"):
+          if(file.substring(file.indexOf('.')) === '.jpg' || file.substring(file.indexOf('.')) === '.jpeg')
+            console.log("Found jpeg");
+          break;
+        case("GIF"):
+          console.log("Show gif");
+          break;
+      }
+    })
+  }
+
   renderImageGallery(){
     return(
       <div className = "App-gallery-images-full">
       <h1>Images</h1>
       <button onClick = { () => this.togglePopup("image")}>New image</button>
+      <label>Filter
+        <select onClick = { (e) => this.handleSelect(e)}>
+          <option key = {0}>All</option>
+          <option key = {1}>JPEG/PNG</option>
+          <option key = {2}>GIF</option>
+        </select>
+      </label>
       <ImageGallery items = {this.state.images}></ImageGallery>
       {this.state.showPopup ? this.renderPopup() : null}
     </div>
