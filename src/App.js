@@ -257,7 +257,8 @@ class Gallery extends React.Component{
       showMusicGallery: false,
       showPopup: false,
       fileToUpload: null,
-      uploadButtonEnabled: false
+      uploadButtonEnabled: false,
+      firstLoad: false
     };
   }
 
@@ -323,16 +324,25 @@ class Gallery extends React.Component{
       const file = element.original;
       switch(e.target.value){
         case("All"):
+          filteredFile.push(element);
           break;
         case("JPEG/PNG"):
-          if(file.substring(file.indexOf('.')) === '.jpg' || file.substring(file.indexOf('.')) === '.jpeg')
-            console.log("Found jpeg");
+          if(file.substring(file.indexOf('.')) === '.jpg' || file.substring(file.indexOf('.')) === '.jpeg'){
+            filteredFile.push(element);
+          }
           break;
         case("GIF"):
-          console.log("Show gif");
+          if(file.substring(file.indexOf('.')) === '.gif'){
+            filteredFile.push(element);
+          }
+          break;
+        default:
+          console.log("ERROR");
           break;
       }
     })
+    this.setState({filteredFiles: filteredFile, firstLoad : true});
+    console.log("state: " + this.state.filteredFiles);
   }
 
   renderImageGallery(){
@@ -347,7 +357,7 @@ class Gallery extends React.Component{
           <option key = {2}>GIF</option>
         </select>
       </label>
-      <ImageGallery items = {this.state.images}></ImageGallery>
+      {this.state.firstLoad ? <ImageGallery items = {this.state.filteredFiles}></ImageGallery> : <ImageGallery items = {this.state.images}></ImageGallery>}
       {this.state.showPopup ? this.renderPopup() : null}
     </div>
     )

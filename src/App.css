@@ -6,7 +6,6 @@
   width: 100%;
   height:10vh;
   top:0;
-  background-color: #61dafb;
 }
 .App-settings{
   position: absolute;
@@ -36,7 +35,7 @@
 }
 .App-menu-button{
   height: 100%;
-  width: 10%;
+  width: 14.28%;
 }
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
