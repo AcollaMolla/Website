@@ -264,7 +264,6 @@ class Gallery extends React.Component{
     axios.get('//localhost:8081/images')
     .then(res =>{
       const images = Object.values(res.data);
-      console.log(images);
       this.setState({images});
     })
   }
