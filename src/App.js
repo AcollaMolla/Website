@@ -264,6 +264,7 @@ class Gallery extends React.Component{
     axios.get('//localhost:8081/images')
     .then(res =>{
       const images = Object.values(res.data);
+      console.log(images);
       this.setState({images});
     })
   }
@@ -290,11 +291,9 @@ class Gallery extends React.Component{
     axios.post("//localhost:8081/images", formdata, { 
     })
     .then(res => {
-      console.log(res.data.filename);
       let image = {
         original: "http://localhost:8081/images/" + res.data.filename
       }
-      console.log(image);
       this.setState(prevState =>({
         images: [...prevState.images, image]
       }));
