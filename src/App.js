@@ -258,10 +258,10 @@ class Gallery extends React.Component{
       showPopup: false,
       fileToUpload: null,
       uploadButtonEnabled: false,
-      firstLoad: false
+      firstLoad: false,
+      selectedFilter: null
     };
   }
-
   componentDidMount(){
     axios.get('//localhost:8081/images')
     .then(res =>{
@@ -318,6 +318,7 @@ class Gallery extends React.Component{
   }
 
   handleSelect(e){
+    this.setState({selectedFilter: e.target.value});
     let filteredFile = [];
     this.state.images.forEach(function(element){
       //console.log(element.original.substring(element.original.indexOf('.')));
@@ -357,7 +358,11 @@ class Gallery extends React.Component{
           <option key = {2}>GIF</option>
         </select>
       </label>
-      {this.state.firstLoad ? <ImageGallery items = {this.state.filteredFiles}></ImageGallery> : <ImageGallery items = {this.state.images}></ImageGallery>}
+      {this.state.firstLoad ? 
+        <ImageGallery items = {this.state.filteredFiles}></ImageGallery>
+      : 
+        <ImageGallery items = {this.state.images}></ImageGallery>}
+      {this.state.filteredFiles.length === 0 ? <p>Wow such empty! You can help expand this gallery by <b className = "App-gallery-empty-filter" onClick = { () => this.togglePopup()}>uploading a {this.state.selectedFilter}</b> now!</p> : null}
       {this.state.showPopup ? this.renderPopup() : null}
     </div>
     )

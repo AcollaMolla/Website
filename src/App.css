@@ -114,6 +114,10 @@
   height: 100%;
   top:0;
 }
+.App-gallery-empty-filter:hover{
+  cursor:grab;
+  text-shadow: 2px 1px black;
+}
 .App-content table{
   margin-left: auto;
   margin-right: auto;
