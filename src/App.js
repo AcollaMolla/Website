@@ -346,6 +346,18 @@ class Gallery extends React.Component{
     console.log("state: " + this.state.filteredFiles);
   }
 
+  handleSearch(e){
+    this.setState({selectedFilter: e.target.value});
+    let filteredFile = [];
+    this.state.images.forEach(function(element){
+      if(element.original.substring(element.original.indexOf('-')).includes(e.target.value)){
+        filteredFile.push(element);
+      }
+    })
+    this.setState({filteredFiles:filteredFile, firstLoad : true});
+    console.log(this.state.filteredFiles);
+  }
+
   renderImageGallery(){
     return(
       <div className = "App-gallery-images-full">
@@ -357,6 +369,9 @@ class Gallery extends React.Component{
           <option key = {1}>JPEG/PNG</option>
           <option key = {2}>GIF</option>
         </select>
+      </label>
+      <label>Search
+        <input type = "text" onChange = { (e) => this.handleSearch(e)}></input>
       </label>
       {this.state.firstLoad ? 
         <ImageGallery items = {this.state.filteredFiles}></ImageGallery>
