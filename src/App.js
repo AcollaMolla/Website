@@ -257,6 +257,7 @@ class Gallery extends React.Component{
       showMusicGallery: false,
       showPopup: false,
       fileToUpload: null,
+      tags: [],
       uploadButtonEnabled: false,
       firstLoad: false,
       selectedFilter: null
@@ -275,6 +276,7 @@ class Gallery extends React.Component{
       showPopup: !this.state.showPopup,
       uploadButtonEnabled: false
     })
+    console.log(this.state.tags);
   }
 
   handleFile(e){
@@ -302,13 +304,27 @@ class Gallery extends React.Component{
     })
   }
 
+  handleTagsChange(e){
+    let value = e.target.value;
+    if((value.indexOf(',')+1) === value.length){
+      this.setState(prevState => ({
+        tags: [...prevState.tags, value]
+      }))
+      e.target.value = null;
+    }
+    console.log(this.state.tags);
+  }
+
   renderPopup(){
     return(
       <div className = "popup">
         <div className = "popup-inner">
           <h3>Add new file</h3>
           <form>
-            <input type = "file" onChange = { (e) => this.handleFile(e)}></input>
+            <input type = "file" onChange = { (e) => this.handleFile(e)}></input><br></br>
+            <label>Tags: 
+              <input type = "text" onChange = { (e) => this.handleTagsChange(e)}></input>
+            </label>
           </form>
           <button onClick = { () => this.togglePopup()}>Cancel</button>
           {this.state.uploadButtonEnabled ? <button onClick = { () => this.handleUpload()}>Upload</button> : <button onClick = { () => this.handleUpload()} disabled>Upload</button>}
