@@ -291,6 +291,8 @@ class Gallery extends React.Component{
     let file = this.state.fileToUpload;
     const formdata = new FormData();
     formdata.append('file', file);
+    formdata.append('file', this.state.tags);
+    console.log("Formdata: " + formdata);
     axios.post("//localhost:8081/images", formdata, { 
     })
     .then(res => {
