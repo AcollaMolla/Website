@@ -23,9 +23,10 @@ class Fish extends React.Component{
       catchDate: null,
       length: null,
       weight: null,
-      popup: false
+      popup: false,
+      fileToUpload: null
     }
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleUpload = this.handleUpload.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
@@ -58,25 +59,44 @@ class Fish extends React.Component{
       });
     }
   }
-  handleSubmit(event){
-    axios.post('//localhost:8081/fishing',{
-      species: this.state.species,
-      catchDate: this.state.catchDate,
-      length: this.state.length,
-      weight: this.state.weight
+
+  handleFile(e){
+    this.setState({
+      fileToUpload: e.target.files[0]
     });
-    this.setState(prevState =>({
-      popup: !this.state.popup,
-      fish: [...prevState.fish, {species: this.state.species, catchDate: this.state.catchDate, length: this.state.length, weight: this.state.weight}]
-    }));
+  }
+  
+  handleUpload(event){
     event.preventDefault();
+    let file = this.state.fileToUpload;
+    const formdata = new FormData();
+    formdata.append('file', file);
+    formdata.append('species', this.state.species);
+    formdata.append('catchDate', this.state.catchDate);
+    formdata.append('length', this.state.length);
+    formdata.append('weight', this.state.weight);
+    axios.post("//localhost:8081/fishing", formdata,{
+    })
+      .then(res => {
+        let fish = {
+          original: "http://localhost:8081/fishing/" + res.data.filename,
+          species: this.state.species,
+          catchDate: this.state.catchDate,
+          length: this.state.length,
+          weight: this.state.length
+        }
+        this.setState(prevState =>({
+          fish: [...prevState.fish, fish]
+        }));
+        this.togglePopup();
+    });
   }
   renderPopup(){
     return(
       <div className = "popup">
         <div className = "popup-inner">
           <h1>Add new fish</h1>
-            <form className = "addStockForm" onSubmit = {this.handleSubmit}>
+            <form className = "addStockForm" onSubmit = {this.handleUpload}>
             <p>Species: 
               <input className = "namefield" type="text" required = {true} onChange = {this.handleChange}></input>
             </p>
@@ -88,6 +108,9 @@ class Fish extends React.Component{
             </p>
             <p>Weight:
               <input className = "weight" type="text" onChange = {this.handleChange}></input>
+            </p>
+            <p>Image:
+            <input type = "file" onChange = { (e) => this.handleFile(e)}></input><br></br>
             </p>
             <input type="submit" value="Submit" />
             <button onClick = { () => this.togglePopup()}>Cancel</button>
