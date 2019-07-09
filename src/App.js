@@ -22,11 +22,20 @@ class Fish extends React.Component{
       species: null,
       catchDate: null,
       length: null,
-      weight: null
+      weight: null,
+      popup: false
     }
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
+
+  handleKeyPress(e){
+    if(e.keyCode === 27 && this.state.popup === true){
+      this.togglePopup();
+    }
+  }
+
   handleChange(event){
     if(event.target.className === "namefield"){
       this.setState({
@@ -98,6 +107,7 @@ class Fish extends React.Component{
         const fish = Object.values(res.data);
         this.setState({fish});
       })
+      document.addEventListener('keydown', this.handleKeyPress);
   }
 
   render(){
@@ -130,7 +140,15 @@ class Stocks extends React.Component{
     });
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
+
+  handleKeyPress(e){
+    if(e.keyCode === 27 && this.state.popup === true){
+      this.togglePopup();
+    }
+  }
+
   handleChange(event){
     if(event.target.className === "namefield"){
       this.setState({
@@ -194,6 +212,7 @@ class Stocks extends React.Component{
         const stocks = Object.values(res.data);
         this.setState({stocks});
       })
+      document.addEventListener('keydown', this.handleKeyPress);
   }
   render(){
     console.log("render");
