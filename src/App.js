@@ -289,18 +289,24 @@ class Gallery extends React.Component{
 
   handleUpload(){
     let file = this.state.fileToUpload;
+    let product = {
+      title: "hej",
+      description: "en beskrivning"
+    }
     const formdata = new FormData();
     formdata.append('file', file);
-    formdata.append('file', this.state.tags);
+    formdata.append('extra', this.state.tags);
     console.log("Formdata: " + formdata);
-    axios.post("//localhost:8081/images", formdata, { 
+    axios.post("//localhost:8081/images", formdata,{ 
     })
     .then(res => {
       let image = {
-        original: "http://localhost:8081/images/" + res.data.filename
+        original: "http://localhost:8081/images/" + res.data.filename,
+        tags: this.state.tags
       }
       this.setState(prevState =>({
-        images: [...prevState.images, image]
+        images: [...prevState.images, image],
+        tags: ""
       }));
       this.togglePopup();
     })
@@ -314,7 +320,6 @@ class Gallery extends React.Component{
       }))
       e.target.value = null;
     }
-    console.log(this.state.tags);
   }
 
   renderPopup(){
