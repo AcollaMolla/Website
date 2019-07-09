@@ -273,10 +273,6 @@ class Gallery extends React.Component{
     document.addEventListener('keydown', this.handleKeyPress);
   }
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyPress);
-  }
-
   handleKeyPress(e){
     if(e.keyCode === 27 && this.state.showPopup === true){
       this.togglePopup();
@@ -317,10 +313,10 @@ class Gallery extends React.Component{
   }
 
   handleTagsChange(e){
-    let value = e.target.value;
+    let value = e.target.value.toLowerCase();
     if((value.indexOf(',')+1) === value.length){
       this.setState(prevState => ({
-        tags: [...prevState.tags, value]
+        tags: [...prevState.tags, value.substring(0, value.indexOf(','))]
       }))
       e.target.value = null;
     }
@@ -373,14 +369,13 @@ class Gallery extends React.Component{
       }
     })
     this.setState({filteredFiles: filteredFile, firstLoad : true});
-    //console.log("state: " + this.state.filteredFiles);
   }
 
   handleSearch(e){
     this.setState({selectedFilter: e.target.value});
     let filteredFile = [];
     this.state.images.forEach(function(element){
-      if(element.original.substring(element.original.indexOf('-')).includes(e.target.value) || (element.tags !== null && element.tags.includes(e.target.value))){
+      if(element.original.substring(element.original.indexOf('-')).includes(e.target.value.toLowerCase()) || (element.tags !== null && element.tags.includes(e.target.value.toLowerCase()))){
         filteredFile.push(element);
       }
     })
@@ -459,6 +454,40 @@ class Gallery extends React.Component{
     );
   }
 }
+class Chat extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      pressedKeys: ""
+    };
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+  }
+  componentDidMount(){
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  handleKeyPress(e){
+    let key = e.keyCode;
+    this.setState(prevState =>({
+      pressedKeys: [...prevState.pressedKeys, key]
+    }));
+    console.log(this.state.pressedKeys);
+    if(this.state.pressedKeys.length > 4)
+      this.setState({pressedKeys:""})
+    if(this.state.pressedKeys[0] === 66 && this.state.pressedKeys[1] === 65 && this.state.pressedKeys[2] === 74 && this.state.pressedKeys[3] === 83){
+      console.log("secret unlocked");
+      this.setState({
+        pressedKeys: ""
+      })
+    }
+  }
+
+  render(){
+    return(
+        <h1>Chat</h1>
+    )
+  }
+}
 class Test extends React.Component{
   constructor(props){
     super(props);
@@ -510,7 +539,7 @@ class Test extends React.Component{
           >Gallery
         </button>
         <button className="App-menu-button"
-          //onClick={() => this.menuClick(4)}
+          onClick={() => this.menuClick(4)}
           >Ulvsby Pirate Chat
         </button>
         <button className="App-menu-button"
@@ -648,6 +677,18 @@ class Test extends React.Component{
             {this.renderMenu()}
             <Clock></Clock>
             <Gallery></Gallery>
+          </header>
+        </div>
+      );
+    }
+    if(this.state.pageView === 4){
+      return(
+        <div className="App">
+          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
+          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+            {this.renderMenu()}
+            <Clock></Clock>
+            <Chat></Chat>
           </header>
         </div>
       );
