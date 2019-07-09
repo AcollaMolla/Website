@@ -262,20 +262,31 @@ class Gallery extends React.Component{
       firstLoad: false,
       selectedFilter: null
     };
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
   componentDidMount(){
     axios.get('//localhost:8081/images')
     .then(res =>{
       const images = Object.values(res.data);
       this.setState({images});
-      console.log(this.state.images);
     })
+    document.addEventListener('keydown', this.handleKeyPress);
   }
-  
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress);
+  }
+
+  handleKeyPress(e){
+    if(e.keyCode === 27 && this.state.showPopup === true){
+      this.togglePopup();
+    }
+  }
   togglePopup(type){
     this.setState({
       showPopup: !this.state.showPopup,
-      uploadButtonEnabled: false
+      uploadButtonEnabled: false,
+      tags: ""
     })
   }
 
@@ -299,8 +310,7 @@ class Gallery extends React.Component{
         tags: this.state.tags
       }
       this.setState(prevState =>({
-        images: [...prevState.images, image],
-        tags: ""
+        images: [...prevState.images, image]
       }));
       this.togglePopup();
     })
@@ -323,8 +333,11 @@ class Gallery extends React.Component{
           <h3>Add new file</h3>
           <form>
             <input type = "file" onChange = { (e) => this.handleFile(e)}></input><br></br>
-            <label>Tags: 
-              <input type = "text" onChange = { (e) => this.handleTagsChange(e)}></input>
+            <label title = "Add a custom name to the file.">Name: 
+              <input type = "text" onChange = { (e) => this.handleTagsChange(e)} placeholder="Use ',' as seperator."></input>
+            </label><br></br>
+            <label title = "Add search tags to you're image.">Tags: 
+              <input type = "text" onChange = { (e) => this.handleTagsChange(e)} placeholder="Use ',' as seperator."></input>
             </label>
           </form>
           <button onClick = { () => this.togglePopup()}>Cancel</button>
@@ -360,19 +373,19 @@ class Gallery extends React.Component{
       }
     })
     this.setState({filteredFiles: filteredFile, firstLoad : true});
-    console.log("state: " + this.state.filteredFiles);
+    //console.log("state: " + this.state.filteredFiles);
   }
 
   handleSearch(e){
     this.setState({selectedFilter: e.target.value});
     let filteredFile = [];
     this.state.images.forEach(function(element){
-      if(element.original.substring(element.original.indexOf('-')).includes(e.target.value) || (element.tags !== null && element.tags.substring(0, element.tags.length).includes(e.target.value))){
+      if(element.original.substring(element.original.indexOf('-')).includes(e.target.value) || (element.tags !== null && element.tags.includes(e.target.value))){
         filteredFile.push(element);
       }
     })
     this.setState({filteredFiles:filteredFile, firstLoad : true});
-    console.log(this.state.filteredFiles);
+    //console.log(this.state.filteredFiles);
   }
 
   renderImageGallery(){
@@ -394,7 +407,7 @@ class Gallery extends React.Component{
         <ImageGallery items = {this.state.filteredFiles}></ImageGallery>
       : 
         <ImageGallery items = {this.state.images}></ImageGallery>}
-      {this.state.filteredFiles.length === 0 ? <p>Wow such empty! You can help expand this gallery by <b className = "App-gallery-empty-filter" onClick = { () => this.togglePopup()}>uploading a {this.state.selectedFilter}</b> now!</p> : null}
+      {this.state.firstLoad && this.state.filteredFiles.length === 0 ? <p>Wow such empty! You can help expand this gallery by <b className = "App-gallery-empty-filter" onClick = { () => this.togglePopup()}>uploading a {this.state.selectedFilter}</b> now!</p> : null}
       {this.state.showPopup ? this.renderPopup() : null}
     </div>
     )
