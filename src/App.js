@@ -268,6 +268,7 @@ class Gallery extends React.Component{
     .then(res =>{
       const images = Object.values(res.data);
       this.setState({images});
+      console.log(this.state.images);
     })
   }
   
@@ -276,11 +277,9 @@ class Gallery extends React.Component{
       showPopup: !this.state.showPopup,
       uploadButtonEnabled: false
     })
-    console.log(this.state.tags);
   }
 
   handleFile(e){
-    console.log(e.target.files[0]);
     this.setState({
       fileToUpload: e.target.files[0], 
       uploadButtonEnabled: true
@@ -289,14 +288,9 @@ class Gallery extends React.Component{
 
   handleUpload(){
     let file = this.state.fileToUpload;
-    let product = {
-      title: "hej",
-      description: "en beskrivning"
-    }
     const formdata = new FormData();
     formdata.append('file', file);
-    formdata.append('extra', this.state.tags);
-    console.log("Formdata: " + formdata);
+    formdata.append('tags', this.state.tags);
     axios.post("//localhost:8081/images", formdata,{ 
     })
     .then(res => {
@@ -373,7 +367,7 @@ class Gallery extends React.Component{
     this.setState({selectedFilter: e.target.value});
     let filteredFile = [];
     this.state.images.forEach(function(element){
-      if(element.original.substring(element.original.indexOf('-')).includes(e.target.value)){
+      if(element.original.substring(element.original.indexOf('-')).includes(e.target.value) || (element.tags !== null && element.tags.substring(0, element.tags.length).includes(e.target.value))){
         filteredFile.push(element);
       }
     })
