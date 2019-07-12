@@ -33,6 +33,11 @@
   margin-bottom: auto;
   border-radius: 25px;
 }
+
+.popup-inner-remaining-chars{
+  font-size: 9px;
+  padding-top:0;
+}
 .App-menu-button{
   height: 100%;
   width: 14.28%;

@@ -300,6 +300,7 @@ class Gallery extends React.Component{
       showPopup: false,
       fileToUpload: null,
       tags: [],
+      description: "",
       uploadButtonEnabled: false,
       firstLoad: false,
       selectedFilter: null
@@ -340,6 +341,7 @@ class Gallery extends React.Component{
     const formdata = new FormData();
     formdata.append('file', file);
     formdata.append('tags', this.state.tags);
+    formdata.append('description', this.state.description);
     axios.post("//localhost:8081/images", formdata,{ 
     })
     .then(res => {
@@ -364,6 +366,12 @@ class Gallery extends React.Component{
     }
   }
 
+  handleDescriptionChange(e){
+    this.setState({
+      description: e.target.value
+    })
+  }
+
   renderPopup(){
     return(
       <div className = "popup">
@@ -371,8 +379,11 @@ class Gallery extends React.Component{
           <h3>Add new file</h3>
           <form>
             <input type = "file" onChange = { (e) => this.handleFile(e)}></input><br></br>
-            <label title = "Add a custom name to the file.">Name: 
-              <input type = "text" onChange = { (e) => this.handleTagsChange(e)} placeholder="Use ',' as seperator."></input>
+            <label title = "Write a short story to the image!">Description:
+              <div>
+              <textarea onChange = {(e) => this.handleDescriptionChange(e)} maxLength = "250" rows = "10" cols = "30"></textarea>
+              <p className = "popup-inner-remaining-chars">Remaining characters: {250 - (this.state.description.length)}</p>
+              </div>
             </label><br></br>
             <label title = "Add search tags to you're image.">Tags: 
               <input type = "text" onChange = { (e) => this.handleTagsChange(e)} placeholder="Use ',' as seperator."></input>
