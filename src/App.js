@@ -549,6 +549,7 @@ class Test extends React.Component{
       pageView: 0,
       color: DEFAULT_BACKGROUND,
       popup: false,
+      showCustomSettings: false,
       image: {
         isImage: false,
         url: null
@@ -609,6 +610,7 @@ class Test extends React.Component{
   renderSettings(){
     return(
       <div className = "App-settings">
+      {this.state.showCustomSettings ? this.renderCustomSettings() : null}
       <h1>Settings</h1>
       <div className = "background">
         <h3>Background layout</h3>
@@ -623,6 +625,7 @@ class Test extends React.Component{
           <button onClick = { () => this.changeImage(image1)}>Winter Sågis</button>
           <button onClick = { () => this.changeImage(image2)}>Inside the Fort</button>
           <button onClick = { () => this.changeImage(image3)}>Staircase to Heaven</button>
+          <button onClick = { () => this.showCustomSettings()}>Custom</button>
         </p>
       </div>
       <div className = "background">
@@ -651,6 +654,21 @@ class Test extends React.Component{
       </div>
     );
   }
+
+  showCustomSettings(){
+    this.setState({
+      showCustomSettings: true
+    })
+  }
+
+  renderCustomSettings(){
+    return(
+      <div className = "popup">
+        <div className = "popup-inner"><h1>custom</h1></div>
+      </div>
+    );
+  }
+
   changeColor(color){
     this.setState({
       color: color,
