@@ -17,7 +17,7 @@
   bottom:1vh;
 }
 .popup{
-  position: absolute;
+  position: fixed;
   height: 112%;
   width:100%;
   top:-12%;
@@ -25,12 +25,12 @@
   text-align: center;
 }
 .popup-inner{
-  background-color: rgba(22, 37, 12, 1);;
+  position: absolute;
+  top:20%;
+  left:40%;
   width: 50vh;
   height:55vh;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: auto;
+  background-color: rgba(22, 37, 12, 1);;
   border-radius: 25px;
 }
 
@@ -55,7 +55,6 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
   flex-flow:column;
 }
 .App-content{
@@ -125,6 +124,10 @@
 .App-gallery-empty-filter:hover{
   cursor:grab;
   text-shadow: 2px 1px black;
+}
+
+.App-settings-color-picker{
+margin-left: 30%;
 }
 .App-content table{
   margin-left: auto;

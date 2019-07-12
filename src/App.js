@@ -5,6 +5,8 @@ import axios from 'axios';
 import Sound from 'react-sound';
 import ImageGallery from 'react-image-gallery';
 import FormData from 'form-data';
+import {SketchPicker} from 'react-color';
+
 import image0 from './004.JPG';
 import image1 from './005.jpg';
 import image2 from './006.jpg';
@@ -13,6 +15,7 @@ import image3 from './007.jpg';
 import sound from './001.mp3';
 //import { BehaviorSubject } from 'rxjs';
 const DEFAULT_BACKGROUND = "#282c34";
+const DEFAULT_TEXT_COLOR = "#ffffff";
 
 class Fish extends React.Component{
   constructor(props){
@@ -238,8 +241,6 @@ class Stocks extends React.Component{
       document.addEventListener('keydown', this.handleKeyPress);
   }
   render(){
-    console.log("render");
-    console.log(this.state.persons);
     return(
       <div className = "App-content">
       {this.state.popup ? this.renderPopup() : null}
@@ -514,7 +515,9 @@ class Chat extends React.Component{
       pressedKeys: ""
     };
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    var colorPicker = null;
   }
+
   componentDidMount(){
     document.addEventListener('keydown', this.handleKeyPress);
   }
@@ -548,6 +551,7 @@ class Test extends React.Component{
       userId: 0, //A test variable to fetch settings based on user's unique id.
       pageView: 0,
       color: DEFAULT_BACKGROUND,
+      textColor: DEFAULT_TEXT_COLOR,
       popup: false,
       showCustomSettings: false,
       image: {
@@ -557,7 +561,9 @@ class Test extends React.Component{
       settings: {
         background: null
       }
-    };
+    }
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.colorPicker = null;
   }
   componentDidMount(){
     axios.get('//localhost:8081/settings/' + this.state.userId)
@@ -572,7 +578,15 @@ class Test extends React.Component{
           this.setState({image : settings[0]});
         }
       })
+      document.addEventListener('keydown', this.handleKeyPress);
   }
+
+  handleKeyPress(e){
+    if(e.keyCode === 27 && this.state.showCustomSettings === true){
+      this.togglePopup();
+    }
+  }
+
   renderMenu(){
     return(
       <div className="App-menu">
@@ -610,7 +624,6 @@ class Test extends React.Component{
   renderSettings(){
     return(
       <div className = "App-settings">
-      {this.state.showCustomSettings ? this.renderCustomSettings() : null}
       <h1>Settings</h1>
       <div className = "background">
         <h3>Background layout</h3>
@@ -619,19 +632,20 @@ class Test extends React.Component{
           <button title = "Green like the trees and forests covering the ruins of Sågis" onClick = { () => this.changeColor("#42f445")}>Sågis Jungle Green</button>
           <button title = "Red as the holy fortress once standing tall beside Sågis Bay" onClick = { () => this.changeColor("#a91107")}>Sågis Red</button>
           <button title = "As blue as the pure water in Sågis Bay" onClick = { () => this.changeColor("#26b4c1")}>Sågis Bay Blue</button>
+          <button onClick = { () => this.togglePopup()}>Custom</button>
         </p>
         <p>Image:
           <button onClick = { () => this.changeImage(image0)}>Aerial</button>
           <button onClick = { () => this.changeImage(image1)}>Winter Sågis</button>
           <button onClick = { () => this.changeImage(image2)}>Inside the Fort</button>
           <button onClick = { () => this.changeImage(image3)}>Staircase to Heaven</button>
-          <button onClick = { () => this.showCustomSettings()}>Custom</button>
         </p>
       </div>
       <div className = "background">
         <h3>Text and fonts</h3>
         <p>Color:
-          <button title = "White as the snow covering the ruins of Sågis">Sågis Snow White</button>
+          <button onClick = { () => this.changeTextColor("#ffffff")} title = "White as the snow covering the ruins of Sågis">Sågis Snow White</button>
+          <button onClick = { () => this.changeTextColor("#000000")} title = "Black as the darkest pits luring at Sågis">Sågis Pitch Black</button>
         </p>
         <p>Font:
           <button title = "Easy to read so why change?">Standard</button>
@@ -655,34 +669,62 @@ class Test extends React.Component{
     );
   }
 
-  showCustomSettings(){
+  changeTextColor(color){
     this.setState({
-      showCustomSettings: true
+      textColor: color
     })
+    this.restRequest();
+  }
+
+  restRequest(){
+    axios.post('//localhost:8081/settings/' + this.state.userId, {
+      backgroundColor: this.state.color,
+      isImage: this.state.image.isImage,
+      url: this.state.image.url,
+      textColor: this.state.textColor
+    });
+  }
+
+  togglePopup(){
+    this.setState({
+      showCustomSettings: !this.state.showCustomSettings
+    })
+  }
+
+  handleColor(e){
+    this.colorPicker = e.hex;
+  }
+
+  applyCustomSetting(){
+    this.changeColor(this.colorPicker);
+    this.togglePopup();
   }
 
   renderCustomSettings(){
     return(
       <div className = "popup">
-        <div className = "popup-inner"><h1>custom</h1></div>
+        <div className = "popup-inner">
+          <h1>custom</h1>
+          <div className = "App-settings-color-picker">
+            <SketchPicker onChange = { (e) => this.handleColor(e)}></SketchPicker>
+          </div>
+          <button onClick = { () => this.applyCustomSetting()}>Apply</button>
+          <button onClick = { () => this.togglePopup()}>Cancel</button>
+        </div>
       </div>
     );
   }
 
   changeColor(color){
     this.setState({
-      color: color,
-      image: {
-        isImage: false,
-        url: null
-      }
-    });
-    axios.post('//localhost:8081/settings/' + this.state.userId, {
-      backgroundColor: color,
-      isImage: false,
-      url: null
-    });
+        color: color,
+        image: {
+          isImage: false,
+          url: null
+        }
+    }, () => this.restRequest());
   }
+
   changeImage(image){
     console.log("Image path: " + image);
     this.setState({
@@ -703,7 +745,7 @@ class Test extends React.Component{
       return(
         <div className="App">
         <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
-        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color, color: this.state.textColor}}>
         {this.renderMenu()}
         <Clock></Clock>
           <div>
@@ -720,7 +762,7 @@ class Test extends React.Component{
       return(
         <div className="App">
         <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
-        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
         {this.renderMenu()}
         <Clock></Clock>
         <Stocks></Stocks>
@@ -732,7 +774,7 @@ class Test extends React.Component{
       return(
         <div className="App">
           <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
-          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
             {this.renderMenu()}
             <Clock></Clock>
             <Fish></Fish>
@@ -744,7 +786,7 @@ class Test extends React.Component{
       return(
         <div className="App">
           <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
-          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
             {this.renderMenu()}
             <Clock></Clock>
             <Gallery></Gallery>
@@ -756,7 +798,7 @@ class Test extends React.Component{
       return(
         <div className="App">
           <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
-          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover'} : {backgroundColor: this.state.color}}>
+          <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
             {this.renderMenu()}
             <Clock></Clock>
             <Chat></Chat>
@@ -768,10 +810,10 @@ class Test extends React.Component{
       return(
         <div className="App">
           <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
-        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover', backgroundRepeat: 'repeat-y'} : {backgroundColor: this.state.color}}>
+        <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover', backgroundRepeat: 'repeat-y',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
         {this.renderMenu()}
-        <Clock></Clock>
         {this.renderSettings()}
+        {this.state.showCustomSettings ? this.renderCustomSettings() : null}
         </header>
         </div>
       );
