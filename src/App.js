@@ -17,6 +17,10 @@ import sound from './001.mp3';
 const DEFAULT_BACKGROUND = "#282c34";
 const DEFAULT_TEXT_COLOR = "#ffffff";
 
+function Rowinfo(props){
+    return <h1>HEJ {props.data.original}</h1>;
+}
+
 class Fish extends React.Component{
   constructor(props){
     super(props);
@@ -27,7 +31,9 @@ class Fish extends React.Component{
       length: null,
       weight: null,
       popup: false,
-      fileToUpload: null
+      fileToUpload: null,
+      singleRowInfo: false,
+      singleRowInfoData: null
     }
     this.handleUpload = this.handleUpload.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -136,16 +142,24 @@ class Fish extends React.Component{
       document.addEventListener('keydown', this.handleKeyPress);
   }
 
+  toggleSingleRowInfo(single_row){
+    this.setState({
+      singleRowInfo: true,
+      singleRowInfoData: single_row
+    });
+  }
+
   render(){
     console.log("render");
     return(
       <div className = "App-content">
+      {this.state.singleRowInfo ? <Rowinfo data = {this.state.singleRowInfoData}></Rowinfo> : null}
       {this.state.popup ? this.renderPopup() : null}
       <h1>Fishes</h1>
-      <table>
+      <table className = "App-fishing-table">
         <tbody>
           <tr><th>Species</th><th>Catch date</th><th>Length (cm)</th><th>Weight (kg)</th></tr>
-          {this.state.fish.map(fish => <tr key={fish.catchDate}><td>{fish.species}</td><td>{fish.catchDate}</td><td>{fish.length}</td><td>{fish.weight}</td></tr>)}
+          {this.state.fish.map(fish => <tr onClick = { () => this.toggleSingleRowInfo(fish)} key={fish._id}><td>{fish.species}</td><td>{fish.catchDate}</td><td>{fish.length}</td><td>{fish.weight}</td></tr>)}
         </tbody>
       </table>
       <button onClick = { () => this.togglePopup()}>Add fish</button>
@@ -744,7 +758,6 @@ class Test extends React.Component{
     if(this.state.pageView === 0){
       return(
         <div className="App">
-        <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
         <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color, color: this.state.textColor}}>
         {this.renderMenu()}
         <Clock></Clock>
@@ -761,7 +774,6 @@ class Test extends React.Component{
     if(this.state.pageView === 1){
       return(
         <div className="App">
-        <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
         <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
         {this.renderMenu()}
         <Clock></Clock>
@@ -773,7 +785,6 @@ class Test extends React.Component{
     if(this.state.pageView === 2){
       return(
         <div className="App">
-          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
           <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
             {this.renderMenu()}
             <Clock></Clock>
@@ -785,7 +796,6 @@ class Test extends React.Component{
     if(this.state.pageView === 3){
       return(
         <div className="App">
-          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
           <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
             {this.renderMenu()}
             <Clock></Clock>
@@ -797,7 +807,6 @@ class Test extends React.Component{
     if(this.state.pageView === 4){
       return(
         <div className="App">
-          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
           <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
             {this.renderMenu()}
             <Clock></Clock>
@@ -809,7 +818,6 @@ class Test extends React.Component{
     if(this.state.pageView === 10){
       return(
         <div className="App">
-          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
         <header className="App-header" style={this.state.image.isImage ? {backgroundImage: 'url(' + this.state.image.url + ')', backgroundSize: 'cover', backgroundRepeat: 'repeat-y',  color: this.state.textColor} : {backgroundColor: this.state.color,  color: this.state.textColor}}>
         {this.renderMenu()}
         {this.renderSettings()}
@@ -827,7 +835,10 @@ class Test extends React.Component{
 }
 function App() {
   return (
-    <Test></Test>
+    <div>
+          <Test></Test>
+          <Sound url={sound} playStatus={Sound.status.PLAYING} playFromPosition={0}></Sound>
+    </div>
   );
 }
 

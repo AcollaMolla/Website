@@ -64,6 +64,25 @@
   top:10%;
   text-align: center;
 }
+
+.App-fishing-table td{
+  cursor: grab;
+}
+
+.App-fishing-table tr:hover{
+  cursor: grab;
+  background-color: rgba(63, 59, 59, 0.705);
+}
+
+.App-fishing-table th:hover{
+  background-color: none;
+  cursor: pointer;
+}
+
+table, tr, td{
+  border: 1px solid black;
+}
+
 .App-gallery{
   margin: auto;
 }
