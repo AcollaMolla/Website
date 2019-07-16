@@ -18,7 +18,15 @@ const DEFAULT_BACKGROUND = "#282c34";
 const DEFAULT_TEXT_COLOR = "#ffffff";
 
 function Rowinfo(props){
-    return <h1>HEJ {props.data.original}</h1>;
+
+  console.log(props);
+    return(
+      <div className = "popup" onClick = {props.onClick}>
+        <div className = "popup-inner">
+          <h1>row info</h1>
+        </div>
+      </div>
+    );
 }
 
 class Fish extends React.Component{
@@ -38,6 +46,7 @@ class Fish extends React.Component{
     this.handleUpload = this.handleUpload.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.toggleSingleRowInfo = this.toggleSingleRowInfo.bind(this);
   }
 
   handleKeyPress(e){
@@ -143,8 +152,9 @@ class Fish extends React.Component{
   }
 
   toggleSingleRowInfo(single_row){
+    console.log("switching state");
     this.setState({
-      singleRowInfo: true,
+      singleRowInfo: !this.state.singleRowInfo,
       singleRowInfoData: single_row
     });
   }
@@ -153,7 +163,7 @@ class Fish extends React.Component{
     console.log("render");
     return(
       <div className = "App-content">
-      {this.state.singleRowInfo ? <Rowinfo data = {this.state.singleRowInfoData}></Rowinfo> : null}
+      {this.state.singleRowInfo ? <Rowinfo data = {this.state.singleRowInfoData} onClick={this.toggleSingleRowInfo}></Rowinfo> : null}
       {this.state.popup ? this.renderPopup() : null}
       <h1>Fishes</h1>
       <table className = "App-fishing-table">
