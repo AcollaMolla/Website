@@ -23,7 +23,20 @@ function Rowinfo(props){
     return(
       <div className = "popup" onClick = {props.onClick}>
         <div className = "popup-inner">
-          <h1>row info</h1>
+          <div className = "popup-inner-image-holder">
+            <img src = {props.data.original}></img>
+          </div>
+          <div className = "popup-inner-data-holder">
+            <p>Species: {props.data.species}</p>
+            <p>Weight: {props.data.weight}</p>
+            <p>Length: {props.data.length}</p>
+            <p>Location: </p>
+            <p>Catcher: </p>
+            <p>Catched with: </p>
+          </div>
+          <div className = "popup-inner-description-holder">
+            <p>Description:</p>
+          </div>
         </div>
       </div>
     );
@@ -129,6 +142,9 @@ class Fish extends React.Component{
             </p>
             <p>Image:
             <input type = "file" onChange = { (e) => this.handleFile(e)}></input><br></br>
+            </p>
+            <p>Description:
+              <textarea maxLength = "250" rows = "10" cols = "30"></textarea>
             </p>
             <input type="submit" value="Submit" />
             <button onClick = { () => this.togglePopup()}>Cancel</button>
