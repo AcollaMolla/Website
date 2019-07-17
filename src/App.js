@@ -60,6 +60,7 @@ class Fish extends React.Component{
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.toggleSingleRowInfo = this.toggleSingleRowInfo.bind(this);
+    var description;
   }
 
   handleKeyPress(e){
