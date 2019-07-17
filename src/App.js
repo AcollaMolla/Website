@@ -35,7 +35,7 @@ function Rowinfo(props){
             <p>Catched with: </p>
           </div>
           <div className = "popup-inner-description-holder">
-            <p>Description:</p>
+            <p>{props.data.description}</p>
           </div>
         </div>
       </div>
@@ -107,16 +107,19 @@ class Fish extends React.Component{
     formdata.append('catchDate', this.state.catchDate);
     formdata.append('length', this.state.length);
     formdata.append('weight', this.state.weight);
+    formdata.append('description', this.description);
     axios.post("//localhost:8081/fishing", formdata,{
     })
       .then(res => {
         let fish = {
-          original: "http://localhost:8081/fishing/" + res.data.filename,
+          original: res.data.original,
           species: this.state.species,
           catchDate: this.state.catchDate,
           length: this.state.length,
-          weight: this.state.length
+          weight: this.state.length,
+          description: this.description
         }
+        console.log("Filename: " + res.data.original);
         this.setState(prevState =>({
           fish: [...prevState.fish, fish]
         }));
@@ -144,15 +147,20 @@ class Fish extends React.Component{
             <p>Image:
             <input type = "file" onChange = { (e) => this.handleFile(e)}></input><br></br>
             </p>
-            <p>Description:
-              <textarea maxLength = "250" rows = "10" cols = "30"></textarea>
-            </p>
+            <div>
+              <p>Description:</p>
+              <textarea onChange = {(e) => this.handleDescriptionChange(e)} maxLength = "250" rows = "10" cols = "30"></textarea>
+            </div>
             <input type="submit" value="Submit" />
             <button onClick = { () => this.togglePopup()}>Cancel</button>
           </form>
         </div>
       </div>
     );
+  }
+
+  handleDescriptionChange(e){
+    this.description = e.target.value;
   }
   togglePopup(){
     this.setState({

@@ -51,6 +51,11 @@
   font-size: 12px;
   margin-right: 10px;
 }
+
+.popup-inner-description-holder{
+  font-size: 14px;
+  width:600px;
+}
 .popup-inner-remaining-chars{
   font-size: 9px;
   padding-top:0;
