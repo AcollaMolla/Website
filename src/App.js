@@ -51,6 +51,7 @@ class Fish extends React.Component{
       catchDate: null,
       length: null,
       weight: null,
+      description: "",
       popup: false,
       fileToUpload: null,
       singleRowInfo: false,
@@ -60,12 +61,11 @@ class Fish extends React.Component{
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.toggleSingleRowInfo = this.toggleSingleRowInfo.bind(this);
-    var description;
   }
 
   handleKeyPress(e){
     if(e.keyCode === 27 && this.state.popup === true){
-      this.togglePopup();
+      this.togglePopup(e);
     }
   }
 
@@ -107,28 +107,29 @@ class Fish extends React.Component{
     formdata.append('catchDate', this.state.catchDate);
     formdata.append('length', this.state.length);
     formdata.append('weight', this.state.weight);
-    formdata.append('description', this.description);
+    formdata.append('description', this.state.description);
     axios.post("//localhost:8081/fishing", formdata,{
     })
       .then(res => {
         let fish = {
+          _id: res.data._id,
           original: res.data.original,
           species: this.state.species,
           catchDate: this.state.catchDate,
           length: this.state.length,
           weight: this.state.length,
-          description: this.description
+          description: this.state.description
         }
-        console.log("Filename: " + res.data.original);
+        console.log("id: " + res.data._id);
         this.setState(prevState =>({
           fish: [...prevState.fish, fish]
         }));
-        this.togglePopup();
+        this.togglePopup(null);
     });
   }
   renderPopup(){
     return(
-      <div className = "popup">
+      <div className = "popup" onClick = {(e) => this.togglePopup(e)}>
         <div className = "popup-inner">
           <h1>Add new fish</h1>
             <form className = "addStockForm" onSubmit = {this.handleUpload}>
@@ -149,10 +150,12 @@ class Fish extends React.Component{
             </p>
             <div>
               <p>Description:</p>
-              <textarea onChange = {(e) => this.handleDescriptionChange(e)} maxLength = "250" rows = "10" cols = "30"></textarea>
+              <div>
+                <textarea onChange = {(e) => this.handleDescriptionChange(e)} maxLength = "250" rows = "10" cols = "30"></textarea>
+                <p className = "popup-inner-remaining-chars">Remaining characters: {250 - (this.state.description.length)}</p>
+              </div>
             </div>
             <input type="submit" value="Submit" />
-            <button onClick = { () => this.togglePopup()}>Cancel</button>
           </form>
         </div>
       </div>
@@ -160,12 +163,20 @@ class Fish extends React.Component{
   }
 
   handleDescriptionChange(e){
-    this.description = e.target.value;
+    this.setState({description: e.target.value})
   }
-  togglePopup(){
-    this.setState({
-      popup: !this.state.popup
-    });
+  togglePopup(e){
+    console.log("e = " + e);
+    if(e === null){
+      this.setState({
+        popup: !this.state.popup
+      });
+    }
+    else if(e.target === e.currentTarget || e.keyCode === 27){
+      this.setState({
+        popup: !this.state.popup
+      });
+    }
   }
   componentDidMount(){
     axios.get('//localhost:8081/fishing')
@@ -177,7 +188,6 @@ class Fish extends React.Component{
   }
 
   toggleSingleRowInfo(single_row){
-    console.log("switching state");
     this.setState({
       singleRowInfo: !this.state.singleRowInfo,
       singleRowInfoData: single_row
@@ -197,7 +207,7 @@ class Fish extends React.Component{
           {this.state.fish.map(fish => <tr onClick = { () => this.toggleSingleRowInfo(fish)} key={fish._id}><td>{fish.species}</td><td>{fish.catchDate}</td><td>{fish.length}</td><td>{fish.weight}</td></tr>)}
         </tbody>
       </table>
-      <button onClick = { () => this.togglePopup()}>Add fish</button>
+      <button onClick = { (e) => this.togglePopup(e)}>Add fish</button>
       </div>
     );
   }
@@ -220,7 +230,7 @@ class Stocks extends React.Component{
 
   handleKeyPress(e){
     if(e.keyCode === 27 && this.state.popup === true){
-      this.togglePopup();
+      this.togglePopup(e);
     }
   }
 
@@ -256,7 +266,7 @@ class Stocks extends React.Component{
   }
   renderPopup(){
     return(
-      <div className = "popup">
+      <div className = "popup" onClick = {(e) => this.togglePopup(e)}>
         <div className = "popup-inner">
           <h1>Add new stock</h1>
             <form className = "addStockForm" onSubmit = {this.handleSubmit}>
@@ -270,16 +280,17 @@ class Stocks extends React.Component{
               <input className = "sell-date" type="date" required = {true} onChange = {this.handleChange}></input>
             </p>
             <input type="submit" value="Submit" />
-            <button onClick = { () => this.togglePopup()}>Cancel</button>
           </form>
         </div>
       </div>
     );
   }
-  togglePopup(){
-    this.setState({
-      popup: !this.state.popup
-    });
+  togglePopup(e){
+    if(e.target === e.currentTarget || e.keyCode === 27){
+      this.setState({
+        popup: !this.state.popup
+      });
+    }
   }
   componentDidMount(){
     axios.get('//localhost:8081/stocks') //Funkar med restcountries/all
@@ -300,7 +311,7 @@ class Stocks extends React.Component{
           {this.state.stocks.map(stock => <tr key={stock.buyDate}><td>{stock.name}</td><td>{stock.buyDate}</td><td>{stock.sellDate}</td></tr>)}
         </tbody>
       </table>
-      <button onClick = { () => this.togglePopup()}>Add stock</button>
+      <button onClick = { (e) => this.togglePopup(e)}>Add stock</button>
       </div>
     );
   }
@@ -626,6 +637,7 @@ class Test extends React.Component{
           console.log("here");
           this.setState({image : settings[0]});
         }
+        this.setState({textColor:settings[0].textColor})
       })
       document.addEventListener('keydown', this.handleKeyPress);
   }
@@ -721,8 +733,9 @@ class Test extends React.Component{
   changeTextColor(color){
     this.setState({
       textColor: color
-    })
-    this.restRequest();
+    }, () => {
+      this.restRequest();
+    });
   }
 
   restRequest(){
