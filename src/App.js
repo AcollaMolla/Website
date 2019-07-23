@@ -321,7 +321,7 @@ class Stocks extends React.Component{
       <div className = "popup" onClick = {(e) => this.toggleSingleRowInfo(e)}>
       <div className = "popup-inner">
         <div className = "popup-inner-image-holder">
-          <img></img>
+          <img alt="There's nothing here..."></img>
         </div>
         <div className = "popup-inner-data-holder">
           <p>Name:</p>
