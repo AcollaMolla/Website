@@ -18,8 +18,6 @@ const DEFAULT_BACKGROUND = "#282c34";
 const DEFAULT_TEXT_COLOR = "#ffffff";
 
 function Rowinfo(props){
-
-  console.log(props);
     return(
       <div className = "popup" onClick = {props.onClick}>
         <div className = "popup-inner">
@@ -222,6 +220,8 @@ class Stocks extends React.Component{
       name: null,
       bDate: null,
       sDate: null,
+      singleRowInfo: false,
+      singleRowInfoData: null
     });
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -231,6 +231,9 @@ class Stocks extends React.Component{
   handleKeyPress(e){
     if(e.keyCode === 27 && this.state.popup === true){
       this.togglePopup(e);
+    }
+    else if(e.keyCode === 27 && this.state.singleRowInfo === true){
+      this.toggleSingleRowInfo(e);
     }
   }
 
@@ -300,15 +303,51 @@ class Stocks extends React.Component{
       })
       document.addEventListener('keydown', this.handleKeyPress);
   }
+
+  toggleSingleRowInfo(stock){
+    if(stock.name !== undefined){
+      this.setState({
+        singleRowInfo: !this.state.singleRowInfo,
+        singleRowInfoData: stock
+      });
+    }
+    else if(stock.target === stock.currentTarget || stock.keyCode === 27){
+      this.setState({singleRowInfo: !this.state.singleRowInfo})
+    }
+  }
+
+  rowinfo(){
+    return(
+      <div className = "popup" onClick = {(e) => this.toggleSingleRowInfo(e)}>
+      <div className = "popup-inner">
+        <div className = "popup-inner-image-holder">
+          <img></img>
+        </div>
+        <div className = "popup-inner-data-holder">
+          <p>Name:</p>
+          <p>Buy date: </p>
+          <p>Sell date: </p>
+          <p>Invested amount: </p>
+          <p>Gain: </p>
+        </div>
+        <div className = "popup-inner-description-holder">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    );
+  }
+
   render(){
     return(
       <div className = "App-content">
+      {this.state.singleRowInfo ? this.rowinfo() : null}
       {this.state.popup ? this.renderPopup() : null}
       <h1>Stocks</h1>
-      <table>
+      <table className = "App-fishing-table">
         <tbody>
           <tr><th>Name</th><th>Buy date</th><th>Sell date</th></tr>
-          {this.state.stocks.map(stock => <tr key={stock.buyDate}><td>{stock.name}</td><td>{stock.buyDate}</td><td>{stock.sellDate}</td></tr>)}
+          {this.state.stocks.map(stock => <tr onClick = { () => this.toggleSingleRowInfo(stock)} key={stock.buyDate}><td>{stock.name}</td><td>{stock.buyDate}</td><td>{stock.sellDate}</td></tr>)}
         </tbody>
       </table>
       <button onClick = { (e) => this.togglePopup(e)}>Add stock</button>
