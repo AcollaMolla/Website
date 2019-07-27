@@ -5,6 +5,7 @@ import axios from 'axios';
 import Sound from 'react-sound';
 import FormData from 'form-data';
 import {SketchPicker} from 'react-color';
+import ImageGallery from 'react-grid-gallery';
 
 import image0 from './004.JPG';
 import image1 from './005.jpg';
@@ -449,14 +450,13 @@ class Gallery extends React.Component{
     let file = this.state.fileToUpload;
     const formdata = new FormData();
     formdata.append('file', file);
-    formdata.append('tags', this.state.tags);
     formdata.append('description', this.state.description);
     axios.post("//localhost:8081/images", formdata,{ 
     })
     .then(res => {
       let image = {
-        original: "http://localhost:8081/images/" + res.data.filename,
-        tags: this.state.tags
+        src: "http://localhost:8081/images/" + res.data.filename,
+        thumbnail: "http://localhost:8081/images/" + res.data.filename,
       }
       this.setState(prevState =>({
         images: [...prevState.images, image]
@@ -494,9 +494,6 @@ class Gallery extends React.Component{
               <p className = "popup-inner-remaining-chars">Remaining characters: {250 - (this.state.description.length)}</p>
               </div>
             </label><br></br>
-            <label title = "Add search tags to you're image.">Tags: 
-              <input type = "text" onChange = { (e) => this.handleTagsChange(e)} placeholder="Use ',' as seperator."></input>
-            </label>
           </form>
           <button onClick = { () => this.togglePopup()}>Cancel</button>
           {this.state.uploadButtonEnabled ? <button onClick = { () => this.handleUpload()}>Upload</button> : <button onClick = { () => this.handleUpload()} disabled>Upload</button>}
@@ -550,17 +547,7 @@ class Gallery extends React.Component{
       <div className = "App-gallery-images-full">
       <h1>Images</h1>
       <button onClick = { () => this.togglePopup("image")}>New image</button>
-      <label>Filter
-        <select onClick = { (e) => this.handleSelect(e)}>
-          <option key = {0}>All</option>
-          <option key = {1}>JPEG/PNG</option>
-          <option key = {2}>GIF</option>
-        </select>
-      </label>
-      <label>Search
-        <input type = "text" onChange = { (e) => this.handleSearch(e)}></input>
-      </label>
-      {this.state.firstLoad && this.state.filteredFiles.length === 0 ? <p>Wow such empty! You can help expand this gallery by <b className = "App-gallery-empty-filter" onClick = { () => this.togglePopup()}>uploading a {this.state.selectedFilter}</b> now!</p> : null}
+      <ImageGallery images={this.state.images}></ImageGallery>
       {this.state.showPopup ? this.renderPopup() : null}
     </div>
     )
