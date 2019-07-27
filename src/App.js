@@ -3,7 +3,6 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import Sound from 'react-sound';
-import ImageGallery from 'react-image-gallery';
 import FormData from 'form-data';
 import {SketchPicker} from 'react-color';
 
@@ -561,10 +560,6 @@ class Gallery extends React.Component{
       <label>Search
         <input type = "text" onChange = { (e) => this.handleSearch(e)}></input>
       </label>
-      {this.state.firstLoad ? 
-        <ImageGallery items = {this.state.filteredFiles}></ImageGallery>
-      : 
-        <ImageGallery items = {this.state.images}></ImageGallery>}
       {this.state.firstLoad && this.state.filteredFiles.length === 0 ? <p>Wow such empty! You can help expand this gallery by <b className = "App-gallery-empty-filter" onClick = { () => this.togglePopup()}>uploading a {this.state.selectedFilter}</b> now!</p> : null}
       {this.state.showPopup ? this.renderPopup() : null}
     </div>
@@ -613,7 +608,6 @@ class Gallery extends React.Component{
           </div>
         }
       </div>
-
     );
   }
 }
