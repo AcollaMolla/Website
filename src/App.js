@@ -17,29 +17,6 @@ import sound from './001.mp3';
 const DEFAULT_BACKGROUND = "#282c34";
 const DEFAULT_TEXT_COLOR = "#ffffff";
 
-function Rowinfo(props){
-    return(
-      <div className = "popup" onClick = {props.onClick}>
-        <div className = "popup-inner">
-          <div className = "popup-inner-image-holder">
-            <img src = {props.data.original}></img>
-          </div>
-          <div className = "popup-inner-data-holder">
-            <p>Species: {props.data.species}</p>
-            <p>Weight: {props.data.weight}</p>
-            <p>Length: {props.data.length}</p>
-            <p>Location: </p>
-            <p>Catcher: </p>
-            <p>Catched with: </p>
-          </div>
-          <div className = "popup-inner-description-holder">
-            <p>{props.data.description}</p>
-          </div>
-        </div>
-      </div>
-    );
-}
-
 class Fish extends React.Component{
   constructor(props){
     super(props);
@@ -64,6 +41,9 @@ class Fish extends React.Component{
   handleKeyPress(e){
     if(e.keyCode === 27 && this.state.popup === true){
       this.togglePopup(e);
+    }
+    else if(e.keyCode === 27 && this.state.singleRowInfo){
+      this.toggleSingleRowInfo();
     }
   }
 
@@ -95,6 +75,35 @@ class Fish extends React.Component{
       fileToUpload: e.target.files[0]
     });
   }
+
+  closePopup(e){
+    if(e.target === e.currentTarget || e.keyCode === 27){
+      this.toggleSingleRowInfo();
+    }
+  }
+
+  Rowinfo(data){
+    return(
+      <div className = "popup" onClick = {(e) => this.closePopup(e)}>
+        <div className = "popup-inner">
+          <div className = "popup-inner-image-holder">
+            <img src = {data.original}></img>
+          </div>
+          <div className = "popup-inner-data-holder">
+            <p>Species: {data.species}</p>
+            <p>Weight: {data.weight}</p>
+            <p>Length: {data.length}</p>
+            <p>Location: </p>
+            <p>Catcher: </p>
+            <p>Catched with: </p>
+          </div>
+          <div className = "popup-inner-description-holder">
+            <p>{data.description}</p>
+          </div>
+        </div>
+      </div>
+    );
+}
   
   handleUpload(event){
     event.preventDefault();
@@ -186,6 +195,7 @@ class Fish extends React.Component{
   }
 
   toggleSingleRowInfo(single_row){
+    console.log("här nu");
     this.setState({
       singleRowInfo: !this.state.singleRowInfo,
       singleRowInfoData: single_row
@@ -196,7 +206,7 @@ class Fish extends React.Component{
     console.log("render");
     return(
       <div className = "App-content">
-      {this.state.singleRowInfo ? <Rowinfo data = {this.state.singleRowInfoData} onClick={this.toggleSingleRowInfo}></Rowinfo> : null}
+      {this.state.singleRowInfo ? this.Rowinfo(this.state.singleRowInfoData) : null}
       {this.state.popup ? this.renderPopup() : null}
       <h1>Fishes</h1>
       <table className = "App-fishing-table">
